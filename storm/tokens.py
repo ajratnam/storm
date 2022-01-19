@@ -1,3 +1,3 @@
 class TokenType:
     def __init__(self, name: str) -> None:
-        self.name = name
+        self.name: str = name
