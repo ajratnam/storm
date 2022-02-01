@@ -2,8 +2,8 @@ from functools import wraps, reduce
 from inspect import getfullargspec
 from itertools import chain
 from operator import or_
-from types import GenericAlias, UnionType, NoneType
-from typing import Callable, TypeVar, Sequence, Generic, Any, Union, Optional
+from types import GenericAlias, UnionType
+from typing import Callable, TypeVar, Sequence, Generic, Any, Optional
 
 DT = TypeVar('DT')
 
@@ -17,10 +17,10 @@ def enforce_type(func: Callable[..., DT]) -> Callable[..., DT]:
     def enforcer(*args, **kwargs) -> DT:
         for kwarg, value in chain(kwargs.items(), zip(spec.args, args)):
             if not check_instance(value, get(kwarg, object)):
-                raise SystemError(f'Expected type {get(kwarg)} for parameter {kwarg} but got {get_type_repr(value)}')
+                raise SystemError(f'Expected type {get(kwarg)} for parameter {kwarg} but got {get_type(value)}')
         res = func(*args, **kwargs)
         if not check_instance(res, get('return', object)):
-            raise SystemError(f'Expected return type {get("return")} for function {name} but got {get_type_repr(res)}')
+            raise SystemError(f'Expected return type {get("return")} for function {name} but got {get_type(res)}')
         return res
 
     return enforcer
@@ -32,12 +32,6 @@ def get_type(obj: Any) -> type:
         types = tuple(get_type(elm) if elm is not obj else obj_type for elm in obj)
         return obj_type[reduce(or_, types)]
     return obj_type
-
-
-def get_type_repr(obj: Any) -> str:
-    if check_instance(obj, Sequence, str):
-        return repr(get_type(obj))
-    return get_type(obj).__name__
 
 
 def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[type | Sequence[type]] = None) -> bool:
@@ -69,17 +63,53 @@ def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[t
     return True
 
 
-class Paginator(Generic[DT]):
-    def __init__(self, obj: Sequence[DT]):
-        self.obj: Sequence[DT] = obj
-        self.index: int = 0
+class StrPaginator:
+    def __init__(self, string: str) -> None:
+        self.string: str = string
+        self._index: int = 0
 
-    def __next__(self) -> DT:
+    @property
+    def index(self) -> int:
+        return self._index
+
+    @index.setter
+    @enforce_type
+    def index(self, index: int) -> None:
+        self._index = -1 if index < 0 else len(self) if index > len(self) else index
+
+    def __len__(self) -> int:
+        return len(self.string)
+
+    def __next__(self) -> str:
         return self.next()
 
-    def next(self, num: int = 1) -> DT:
-        self.index += num
-        return self.obj[self.index]
+    @property
+    def char(self) -> str:
+        return self.string[self.index] if self.not_reached_end and self.index >= 0 else ''
 
-    def prev(self, num: int = 1) -> DT:
-        return self.next(-num)
+    @property
+    def not_reached_end(self) -> bool:
+        return self.index < len(self.string)
+
+    @property
+    def reached_end(self) -> bool:
+        return not self.not_reached_end
+
+    @enforce_type
+    def next(self, step: int = 1) -> str:
+        self.index += step
+        return self.string[self.index]
+
+    @enforce_type
+    def prev(self, step: int = 1) -> str:
+        return self.next(-step)
+
+    @enforce_type
+    def goto_next_non_empty(self, step: int = 1) -> str:
+        while self.next(step).isspace():
+            pass
+        return self.char
+
+    @enforce_type
+    def goto_prev_non_empty(self, step: int = 1) -> str:
+        return self.goto_next_non_empty(-step)
