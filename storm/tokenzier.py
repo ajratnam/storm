@@ -13,6 +13,7 @@ class Tokenizer(StrPaginator):
         self.tokens: list[Token] = []
         super().__init__(string)
 
+    @enforce_type
     def parse(self) -> list[Token]:
         while self.not_reached_end:
             token = self.get_single_token()

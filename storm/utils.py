@@ -3,7 +3,7 @@ from inspect import getfullargspec
 from itertools import chain
 from operator import or_
 from types import GenericAlias, UnionType
-from typing import Callable, TypeVar, Sequence, Generic, Any, Optional
+from typing import Callable, TypeVar, Sequence, Any, Optional
 
 DT = TypeVar('DT')
 

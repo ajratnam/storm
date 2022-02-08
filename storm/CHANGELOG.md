@@ -1,9 +1,10 @@
-## Latest Commit
-- Added more **methods** to **Paginator**.
-- Added dummy **parse** method to **Tokenizer**.
-- Created **CHANGELOG.md**.
-- Changed the **error* raised by **enforcer**
-- Moved **Token** type to **tokens.py**.
+## 01.02.2022 ([b9dd820c](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548))
+- Added more **methods** to [Paginator](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R71-R115).
+- Added dummy **parse** method to [Tokenizer](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548#diff-d138c856daaf4a8615fb0a495b41c6168479dc7613918686a64276897683b7c9R16-R23).
+- Created [CHANGELOG.md](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548#diff-f57647e77410d35e5c5e81ff0f379ace81005170f4400b011c6d26fdc9c9d207R1-R21).
+- Changed the **error** raised by [enforcer](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811L20-R23).
+- Moved **Token** type to [tokens.py](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548#diff-1af35f03aeaa196fe030d54230728c3f21cdcce78bdda70764e919b4a2a4c6bfR10-R17).
+- Renamed **Paginator** to [StrPaginator](https://github.com/ajratnam/storm/commit/b9dd820c0c3b904864c689a5c171cdb3e7094548#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811L72-R69).
 - Updated most of the **functions** to use **enforce_type**.
 
 ## 19.01.2022 ([4484b537](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4))
@@ -11,8 +12,8 @@
 - Added **return type** to [execute](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-73fd8e83d3fa7549ec08fa8bacacf78afba2128315b647cbd15b0ea932278f84R9).
 - Created [Paginator](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R72-R85) for **future usage**.
 - Created [check_instance](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R43-R69) for **instance checking of generics**.
-- Created [get_type](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R29-R34) and [get_type_repr](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R37-R40) to find the **type** and **repr of the type** of the object.
-- Updated [Executor](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R19) to use the **new** check_instance.
+- Created [get_type](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R29-R34) and [get_type_repr](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R37-R40) to find the [type](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R29-R34) and [repr of the type](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R37-R40) of the object.
+- Updated [Executor](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R19) to use the **new** [check_instance](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R43-R69).
 - Updated [Executor](https://github.com/ajratnam/storm/commit/4484b53700ff09897c0bdd568d0df1efdcdd57d4#diff-f033f0ad91830d3786b9510773119589ee24cd96053073f1eb5ad2d6c09dd811R20) to raise **better error**.
 
 ## 12.01.2022 ([c475409e](https://github.com/ajratnam/storm/commit/c475409edff82077f9fbe55232edc8a7ec9ce76e))
