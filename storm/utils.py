@@ -1,3 +1,4 @@
+import inspect
 from functools import wraps, reduce
 from inspect import getfullargspec
 from itertools import chain
@@ -31,6 +32,11 @@ def get_type(obj: Any) -> type:
     if check_instance(obj, Sequence, str):
         types = tuple(get_type(elm) if elm is not obj else obj_type for elm in obj)
         return obj_type[reduce(or_, types)]
+    elif check_instance(obj, Callable):
+        signature = inspect.signature(obj)
+        param_types = [typehint if (typehint := param.annotation) != inspect._empty else Any for param in signature.parameters.values()]
+        return_type = RT if (RT := signature.return_annotation) != inspect._empty else Any
+        return Callable[[*param_types], return_type]
     return obj_type
 
 
@@ -50,7 +56,7 @@ def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[t
                     return False
         else:
             raise NotImplementedError(f'Instance checking for type {origin} is not implemented yet')
-    elif isinstance(types, type) or types in [Sequence]:
+    elif isinstance(types, type) or types in [Sequence, Callable]:
         if not isinstance(obj, types):
             return False
     elif isinstance(types, Sequence):
@@ -58,6 +64,14 @@ def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[t
             if check_instance(obj, obj_type):
                 return True
         return False
+    elif isinstance(types, Callable):
+        *args, return_type = types.__args__
+        signature = inspect.signature(obj)
+        if len(signature.parameters) != len(args) or signature.return_annotation != return_type:
+            return False
+        for parameter, param_type in zip(signature.parameters.values(), args):
+            if parameter == inspect._empty or parameter.annotation != param_type:
+                return False
     else:
         raise NotImplementedError(f'Instance checking for type {types} is not implemented yet')
     return True
