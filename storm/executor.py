@@ -7,6 +7,7 @@ class Executor:
     def __init__(self, code: str) -> None:
         self.code: str = code
 
+    @enforce_type
     def execute(self) -> None:
         tokens = tokenize(self.code)
         for token in tokens:
