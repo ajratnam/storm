@@ -117,7 +117,7 @@ class StrPaginator:
     @enforce_type
     def next(self, step: int = 1) -> str:
         self.index += step
-        return self.string[self.index]
+        return self.char
 
     @enforce_type
     def prev(self, step: int = 1) -> str:
@@ -132,3 +132,25 @@ class StrPaginator:
     @enforce_type
     def goto_prev_non_empty(self, step: int = 1) -> str:
         return self.goto_next_non_empty(-step)
+
+    @enforce_type
+    def move_to_next_non_empty(self, step: int = 1) -> str:
+        while self.char.isspace():
+            self.next(step)
+        return self.char
+
+    @enforce_type
+    def move_to_prev_non_empty(self, step: int = 1) -> str:
+        return self.move_to_next_non_empty(-step)
+
+    @enforce_type
+    def move_while_condition(self, condition: Callable[[str], bool], step: int = 1) -> str:
+        while condition(self.char):
+            return self.move_to_next_non_empty(step)
+
+    @enforce_type
+    def check_in(self, collection: Collection) -> Callable[[], bool]:
+        @enforce_type
+        def checker() -> bool:
+            return bool(self.char) and self.char in collection
+        return checker
