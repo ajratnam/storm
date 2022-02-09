@@ -4,7 +4,7 @@ from inspect import getfullargspec
 from itertools import chain
 from operator import or_
 from types import GenericAlias, UnionType
-from typing import Callable, TypeVar, Sequence, Any, Optional
+from typing import Callable, TypeVar, Sequence, Any, Optional, Collection
 
 DT = TypeVar('DT')
 
@@ -56,9 +56,11 @@ def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[t
                     return False
         else:
             raise NotImplementedError(f'Instance checking for type {origin} is not implemented yet')
-    elif isinstance(types, type) or types in [Sequence, Callable]:
+    elif isinstance(types, type) or types in [Sequence, Callable, Collection]:
         if not isinstance(obj, types):
             return False
+    elif types is Any:
+        pass
     elif isinstance(types, Sequence):
         for obj_type in types:
             if check_instance(obj, obj_type):
@@ -72,6 +74,9 @@ def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[t
         for parameter, param_type in zip(signature.parameters.values(), args):
             if parameter == inspect._empty or parameter.annotation != param_type:
                 return False
+    elif obj is None:
+        if types is not None:
+            return False
     else:
         raise NotImplementedError(f'Instance checking for type {types} is not implemented yet')
     return True
