@@ -139,8 +139,3 @@ class StrPaginator:
     def move_while_condition(self, condition: Callable[[str], bool], step: int = 1) -> str:
         while condition(self.char):
             return self.move_to_next_non_empty(step)
-
-    def check_in(self, collection: Collection) -> Callable[[], bool]:
-        def checker() -> bool:
-            return bool(self.char) and self.char in collection
-        return checker

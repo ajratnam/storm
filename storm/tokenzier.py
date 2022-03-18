@@ -25,6 +25,8 @@ class Tokenizer(Checker, StrPaginator):
             return self.parse_number()
         elif self.char_check():
             return self.parse_variable()
+        elif self.base_operator_check():
+            return self.parse_operator()
         self.goto_next_non_empty()
 
     def parse_number(self) -> Token:
