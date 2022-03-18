@@ -4,7 +4,7 @@ from inspect import getfullargspec
 from itertools import chain
 from operator import or_
 from types import GenericAlias, UnionType
-from typing import Callable, TypeVar, Sequence, Any, Optional, Collection
+from typing import Callable, TypeVar, Sequence, Any, Optional, Collection, Generic
 
 DT = TypeVar('DT')
 
@@ -82,9 +82,11 @@ def check_instance(obj: Any, types: type | Sequence[type], not_types: Optional[t
     return True
 
 
-class StrPaginator:
-    def __init__(self, string: str) -> None:
-        self.string: str = string
+class Paginator(Generic[DT]):
+    ctx: DT
+
+    def __init__(self, sequence: Sequence[DT]) -> None:
+        self.sequence: list = list(sequence)
         self._index: int = 0
 
     @property
@@ -96,48 +98,56 @@ class StrPaginator:
         self._index = -1 if index < 0 else len(self) if index > len(self) else index
 
     def __len__(self) -> int:
-        return len(self.string)
+        return len(self.sequence)
 
-    def __next__(self) -> str:
+    def __next__(self) -> DT:
         return self.next()
 
+    def pop(self) -> DT:
+        self.prev()
+        return self.sequence.pop(self.index+1)
+
     @property
-    def char(self) -> str:
-        return self.string[self.index] if self.not_reached_end and self.index >= 0 else ''
+    def obj(self) -> DT:
+        return self.sequence[self.index] if self.not_reached_end and self.index >= 0 else ''
+
+    @obj.setter
+    def obj(self, value) -> None:
+        self.sequence[self.index] = value
 
     @property
     def not_reached_end(self) -> bool:
-        return self.index < len(self.string)
+        return self.index < len(self.sequence)
 
     @property
     def reached_end(self) -> bool:
         return not self.not_reached_end
 
-    def next(self, step: int = 1) -> str:
+    def next(self, step: int = 1) -> DT:
         self.index += step
-        return self.char
+        return self.obj
 
-    def prev(self, step: int = 1) -> str:
+    def prev(self, step: int = 1) -> DT:
         return self.next(-step)
 
-    def goto_next_non_empty(self, step: int = 1) -> str:
+    def goto_next_non_empty(self, step: int = 1) -> DT:
         while self.next(step).isspace():
             pass
-        return self.char
+        return self.obj
 
-    def goto_prev_non_empty(self, step: int = 1) -> str:
+    def goto_prev_non_empty(self, step: int = 1) -> DT:
         return self.goto_next_non_empty(-step)
 
-    def move_to_next_non_empty(self, step: int = 1) -> str:
-        while self.char.isspace():
+    def move_to_next_non_empty(self, step: int = 1) -> DT:
+        while self.obj.isspace():
             self.next(step)
-        return self.char
+        return self.obj
 
-    def move_to_prev_non_empty(self, step: int = 1) -> str:
+    def move_to_prev_non_empty(self, step: int = 1) -> DT:
         return self.move_to_next_non_empty(-step)
 
-    def move_while_condition(self, condition: Callable[[str], bool], step: int = 1) -> str:
-        while condition(self.char):
+    def move_while_condition(self, condition: Callable[[DT], bool], step: int = 1) -> DT:
+        while condition(self.obj):
             return self.move_to_next_non_empty(step)
 
 
