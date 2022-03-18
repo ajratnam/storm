@@ -139,3 +139,20 @@ class StrPaginator:
     def move_while_condition(self, condition: Callable[[str], bool], step: int = 1) -> str:
         while condition(self.char):
             return self.move_to_next_non_empty(step)
+
+
+def strip(objs: Collection[DT], denied: Any) -> Collection[DT] | str:
+    if not check_instance(denied, Collection) or not denied:
+        denied = [denied]
+    filtered = (obj for obj in objs if obj not in denied)
+    if isinstance(objs, str):
+        return ''.join(filtered)
+    return list(filtered)
+
+
+def extend(obj_list: list, new_val: Any) -> list:
+    if isinstance(new_val, (list, tuple)):
+        obj_list.extend(new_val)
+    else:
+        obj_list.append(new_val)
+    return obj_list

@@ -1,6 +1,9 @@
+from typing import Collection
+
 from storm.checks import Checker
-from storm.tokens import Token, IntegerType, VariableType
-from storm.utils import StrPaginator
+from storm.collection import OPERATORS
+from storm.tokens import *
+from storm.utils import StrPaginator, strip, extend
 
 
 def tokenize(string: str) -> list[Token]:
@@ -14,13 +17,13 @@ class Tokenizer(Checker, StrPaginator):
 
     def parse(self) -> list[Token]:
         while self.not_reached_end:
-            token = self.get_single_token()
+            token = self.get_token()
             if token:
-                self.tokens.append(token)
+                extend(self.tokens, token)
             self.move_to_next_non_empty()
         return self.tokens
 
-    def get_single_token(self) -> Token | None:
+    def get_token(self) -> Collection[Token] | Token | None:
         if self.int_check():
             return self.parse_number()
         elif self.char_check():
@@ -42,3 +45,23 @@ class Tokenizer(Checker, StrPaginator):
             value += self.char
             self.goto_next_non_empty()
         return Token(VariableType, value)
+
+    def parse_operator(self) -> Collection[Token] | Token:
+        starting_index = self.index
+        value = ''
+        while self.base_operator_check():
+            value += self.char
+            self.goto_next_non_empty()
+        other_operators = strip(value, '+-')
+        if other_operators:
+            if other_operators not in OPERATORS:
+                raise SyntaxError(f"{value} is not an operator")
+            value = other_operators + strip(value, other_operators)
+        operator = ''
+        if starting_index:
+            for operator in OPERATORS:
+                if value.startswith(operator):
+                    break
+        prefix = value[len(operator):]
+        tokens = [operator and Token(OperatorType, operator), prefix and Token(PrefixType, prefix)]
+        return strip(tokens, '')

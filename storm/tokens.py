@@ -16,8 +16,10 @@ class Token:
         return self.type.name
 
     def __repr__(self) -> str:
-        return f'<{self.name} value={self.value}>'
+        return f'<{self.name} value="{self.value}">'
 
 
 IntegerType = TokenType('Integer')
 VariableType = TokenType('VariableType')
+OperatorType = TokenType('OperatorType')
+PrefixType = TokenType('PrefixType')
