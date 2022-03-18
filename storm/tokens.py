@@ -9,7 +9,7 @@ class TokenType:
 class Token:
     def __init__(self, token_type: TokenType, value: Any) -> None:
         self.type: TokenType = token_type
-        self.value = value
+        self.value: Any = value
 
     @property
     def name(self) -> str:
@@ -20,3 +20,4 @@ class Token:
 
 
 IntegerType = TokenType('Integer')
+VariableType = TokenType('VariableType')
