@@ -1,19 +1,19 @@
 from typing import Collection
 
 from storm.checks import Checker
-from storm.collection import OPERATORS
+from storm.collection import OPERATORS, OPERATOR_PRIORITY_ORDER
 from storm.tokens import *
-from storm.utils import StrPaginator, strip, extend
+from storm.utils import Paginator, strip, extend
 
 
 def tokenize(string: str) -> list[Token]:
     return Tokenizer(string).parse()
 
 
-class Tokenizer(Checker, StrPaginator):
-    def __init__(self, string: str) -> None:
+class Tokenizer(Checker, Paginator):
+    def __init__(self, sequence: str) -> None:
         self.tokens: list[Token] = []
-        super().__init__(string)
+        super().__init__(sequence)
 
     def parse(self) -> list[Token]:
         while self.not_reached_end:
@@ -21,7 +21,29 @@ class Tokenizer(Checker, StrPaginator):
             if token:
                 extend(self.tokens, token)
             self.move_to_next_non_empty()
+        self.final_parse()
         return self.tokens
+
+    def final_parse(self) -> None:
+        self.combine_prefix()
+        self.squash_operators()
+
+    def combine_prefix(self) -> None:
+        tokens = Paginator(self.tokens)
+        while tokens.not_reached_end:
+            if tokens.obj.type is PrefixType and tokens.next():
+                tokens.obj = PrefixedToken(tokens.pop().value, tokens.obj.value)
+            tokens.next()
+        self.tokens = tokens.sequence
+
+    def squash_operators(self) -> None:
+        for operators in OPERATOR_PRIORITY_ORDER:
+            tokens = Paginator(self.tokens)
+            while tokens.not_reached_end:
+                if tokens.obj.type is OperatorType and tokens.obj.value in operators and tokens.next():
+                    tokens.obj = SquashedOperatorToken(tokens.pop(), tokens.pop().value, tokens.obj)
+                tokens.next()
+            self.tokens = tokens.sequence
 
     def get_token(self) -> Collection[Token] | Token | None:
         if self.int_check():
@@ -35,14 +57,14 @@ class Tokenizer(Checker, StrPaginator):
     def parse_number(self) -> Token:
         value = ''
         while self.int_check():
-            value += self.char
+            value += self.obj
             self.goto_next_non_empty()
         return Token(IntegerType, int(value))
 
     def parse_variable(self) -> Token:
         value = ''
         while self.char_check():
-            value += self.char
+            value += self.obj
             self.goto_next_non_empty()
         return Token(VariableType, value)
 
@@ -50,7 +72,7 @@ class Tokenizer(Checker, StrPaginator):
         starting_index = self.index
         value = ''
         while self.base_operator_check():
-            value += self.char
+            value += self.obj
             self.goto_next_non_empty()
         other_operators = strip(value, '+-')
         if other_operators:

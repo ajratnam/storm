@@ -14,7 +14,11 @@ OPERATORS = {
     '/': 'DIVISION_OPERATOR',
     '=': 'ASSIGNMENT_OPERATOR',
 }
-
 INVERSE_OPERATORS = {OPERATORS[x]: x for x in OPERATORS}
-
 BASE_OPERATORS = ['+', '-', '/', '*', '=']
+OPERATOR_PRIORITY_ORDER = [
+    ['**'],
+    ['*', '/', '//'],
+    ['+', '-'],
+    ['==', '=']
+]

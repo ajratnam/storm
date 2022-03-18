@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 
 class TokenType:
@@ -19,7 +19,28 @@ class Token:
         return f'<{self.name} value="{self.value}">'
 
 
+class PrefixedToken(Token):
+    def __init__(self, value: Any, prefix: str) -> None:
+        super().__init__(PrefixedType, value)
+        self.prefix: str = prefix
+
+    def __repr__(self) -> str:
+        return f'<{self.name} prefix="{self.prefix}" value="{self.value}">'
+
+
+class SquashedOperatorToken(Token):
+    def __init__(self, roperand: Token, operator: Token, loperand: Token) -> None:
+        super().__init__(SquashedOperatorType, operator)
+        self.loperand: Token = loperand
+        self.roperand: Token = roperand
+
+    def __repr__(self) -> str:
+        return f'<{self.name} loperand={self.loperand} operator="{self.value}" right={self.roperand}>'
+
+
 IntegerType = TokenType('Integer')
-VariableType = TokenType('VariableType')
+VariableType = TokenType('Variable')
 OperatorType = TokenType('OperatorType')
 PrefixType = TokenType('PrefixType')
+PrefixedType = TokenType('Prefixed')
+SquashedOperatorType = TokenType('SquashedOperator')
