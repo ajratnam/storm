@@ -32,7 +32,7 @@ class Tokenizer(Checker, Paginator):
         tokens = Paginator(self.tokens)
         while tokens.not_reached_end:
             if tokens.obj.type is PrefixType and tokens.next():
-                tokens.obj = PrefixedToken(tokens.pop().value, tokens.obj.value)
+                tokens.obj = PrefixedToken(tokens.pop(), tokens.obj.value)
             tokens.next()
         self.tokens = tokens.sequence
 
@@ -59,7 +59,7 @@ class Tokenizer(Checker, Paginator):
         while self.int_check():
             value += self.obj
             self.goto_next_non_empty()
-        return Token(IntegerType, int(value))
+        return Token(IntegerType, value)
 
     def parse_variable(self) -> Token:
         value = ''

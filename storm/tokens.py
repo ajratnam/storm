@@ -1,9 +1,12 @@
-from typing import Any, Union
+from typing import Any
 
 
 class TokenType:
     def __init__(self, name: str) -> None:
         self.name: str = name
+
+    def __repr__(self):
+        return f'<{self.name}>'
 
 
 class Token:
@@ -20,7 +23,7 @@ class Token:
 
 
 class PrefixedToken(Token):
-    def __init__(self, value: Any, prefix: str) -> None:
+    def __init__(self, value: Token, prefix: str) -> None:
         super().__init__(PrefixedType, value)
         self.prefix: str = prefix
 
