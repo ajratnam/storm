@@ -166,3 +166,7 @@ def extend(obj_list: list, new_val: Any) -> list:
     else:
         obj_list.append(new_val)
     return obj_list
+
+
+def make_error(name: str) -> type:
+    return type(name, (Exception,), {})
