@@ -52,6 +52,8 @@ class Tokenizer(Checker, Paginator):
             return self.parse_variable()
         elif self.base_operator_check():
             return self.parse_operator()
+        elif self.string_check():
+            return self.parse_string()
         self.goto_next_non_empty()
 
     def parse_number(self) -> Token:
@@ -87,3 +89,17 @@ class Tokenizer(Checker, Paginator):
         prefix = value[len(operator):]
         tokens = [operator and Token(OperatorType, operator), prefix and Token(PrefixType, prefix)]
         return strip(tokens, '')
+
+    def parse_string(self) -> Token:
+        value = ''
+        starting_paren = self.obj
+        while self.not_reached_end:
+            self.next()
+            value += self.obj
+            if self.obj == starting_paren:
+                self.goto_next_non_empty()
+                if self.string_check():
+                    value += self.parse_string().value
+                return Token(StringType, value[:-1])
+        else:
+            raise SyntaxError("Unclosed string")

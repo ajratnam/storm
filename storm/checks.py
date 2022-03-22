@@ -19,3 +19,4 @@ class Checker(Paginator):
         self.int_check: Check = Check(self, DIGITS)
         self.char_check: Check = Check(self, ALPHABETS)
         self.base_operator_check: Check = Check(self, BASE_OPERATORS)
+        self.string_check: Check = Check(self, STRING_PARENS)
