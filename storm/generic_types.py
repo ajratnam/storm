@@ -7,8 +7,11 @@ DT = TypeVar('DT')
 
 
 class Object(Generic[DT]):
-    def __init__(self, value: DT):
-        self._value: DT = self._convert(value)
+    def __init__(self, value: DT, convert: bool = False) -> None:
+        if convert:
+            self._value: DT = self._convert(value)
+        else:
+            self._value: DT = self._base_convert(value)
 
     @property
     def value(self) -> DT:
@@ -21,6 +24,10 @@ class Object(Generic[DT]):
     @value.deleter
     def value(self) -> None:
         raise AttributeError('Cannot be deleted')
+
+    @staticmethod
+    def _base_convert(value: Any) -> DT:
+        return value
 
     @staticmethod
     def _convert(value: Any) -> DT:

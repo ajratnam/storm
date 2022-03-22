@@ -17,7 +17,7 @@ def do_reversible_operation(left: Object, right: Object, operation: str) -> Obje
     except Exception as FirstException:
         try:
             return getattr(right, f'__r{operation}__')(left)
-        except NotImplementedError | ReverseTypeError:
+        except (NotImplementedError, ReverseTypeError):
             raise FirstException
 
 
