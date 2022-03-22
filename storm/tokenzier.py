@@ -59,7 +59,7 @@ class Tokenizer(Checker, Paginator):
         while self.int_check():
             value += self.obj
             self.goto_next_non_empty()
-        return Token(IntegerType, value)
+        return Token(NumberType, value)
 
     def parse_variable(self) -> Token:
         value = ''

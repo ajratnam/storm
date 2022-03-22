@@ -41,9 +41,10 @@ class SquashedOperatorToken(Token):
         return f'<{self.name} loperand={self.loperand} operator="{self.value}" right={self.roperand}>'
 
 
-IntegerType = TokenType('Integer')
+NumberType = TokenType('Number')
 VariableType = TokenType('Variable')
 OperatorType = TokenType('OperatorType')
 PrefixType = TokenType('PrefixType')
 PrefixedType = TokenType('Prefixed')
 SquashedOperatorType = TokenType('SquashedOperator')
+StringType = TokenType('String')

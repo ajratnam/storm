@@ -20,7 +20,7 @@ class Executor(Paginator[tokens.Token]):
 
     def parse(self, token):
         match token.type:
-            case tokens.IntegerType:
+            case tokens.NumberType:
                 return Number(token.value)
             case tokens.SquashedOperatorType:
                 token: tokens.SquashedOperatorToken
