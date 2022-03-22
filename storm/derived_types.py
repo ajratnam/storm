@@ -2,7 +2,7 @@ from storm.converters import number
 from storm.generic_types import *
 
 
-class Number(Addable, Subtractable, Multipliable, Dividable, Object):
+class Number(Addable, Subtractable, Multipliable, Dividable, Negatable, Positable, Object):
     value: float
 
     def __init__(self, value: Any) -> None:
@@ -35,6 +35,12 @@ class Number(Addable, Subtractable, Multipliable, Dividable, Object):
 
     def __rdiv__(self, other: Object) -> 'Number':
         return Number(self._convert(other.value) / self.value)
+
+    def __neg__(self):
+        return Number(-self.value)
+
+    def __pos__(self):
+        return self
 
     @property
     def is_integer(self):

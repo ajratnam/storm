@@ -2,7 +2,7 @@ from typing import Generator
 
 from storm import tokens
 from storm.generic_types import Object
-from storm.operations import handle_operation
+from storm.handlers import handle_operation, handle_prefix
 from storm.tokenzier import tokenize
 from storm.derived_types import Number
 from storm.utils import Paginator
@@ -28,6 +28,6 @@ class Executor(Paginator[tokens.Token]):
                 return handle_operation(left, right, token.value)
             case tokens.PrefixedType:
                 token: tokens.PrefixedToken
-                return self.parse(token.value) * (-1) ** token.prefix.count('-')
+                return handle_prefix(self.parse(token.value), token.prefix)
             case other:
                 raise ValueError(f'Execution for token type {other} not created!!')

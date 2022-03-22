@@ -5,7 +5,7 @@ from storm.errors import ReverseTypeError
 
 
 def handle_operation(left: Object, right: Object, operator: str) -> Object:
-    handler: Callable[[Object, Object], Object] | None = operations.get(operator)
+    handler: Callable[[Object, Object], Object] | None = operation_mapping.get(operator)
     if handler:
         return handler(left, right)
     raise NotImplementedError(f'Unknown Operator "{operator}"')
@@ -37,9 +37,31 @@ def divide(left: Dividable, right: Object) -> Object:
     return do_reversible_operation(left, right, 'div')
 
 
-operations = {
+def handle_prefix(obj: Object, prefixes: str) -> Object:
+    for prefix in prefixes:
+        handler: Callable[[Object], Object] | None = prefix_mapping.get(prefix)
+        if not handler:
+            raise NotImplementedError(f'Unknown Prefix "{prefix}"')
+        obj = handler(obj)
+    return obj
+
+
+def posite(obj: Object) -> Object:
+    return obj.__pos__()
+
+
+def negate(obj: Object) -> Object:
+    return obj.__neg__()
+
+
+operation_mapping = {
     '+': add,
     '-': subtract,
     '*': multiply,
     '/': divide
+}
+
+prefix_mapping = {
+    '+': posite,
+    '-': negate
 }
