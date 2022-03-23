@@ -3,6 +3,7 @@ from typing import Generator
 from storm import tokens
 from storm.generic_types import Object
 from storm.handlers import handle_operation, handle_prefix
+from storm.tokens import Token
 from storm.tokenzier import tokenize
 from storm.derived_types import Number, String
 from storm.utils import Paginator
@@ -18,7 +19,7 @@ class Executor(Paginator[tokens.Token]):
             yield self.parse(self.obj)
             self.next()
 
-    def parse(self, token):
+    def parse(self, token: Token) -> Object:
         match token.type:
             case tokens.NumberType:
                 return Number(token.value)

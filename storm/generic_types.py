@@ -57,10 +57,10 @@ class Object(Generic[DT]):
     def __rdiv__(self, other: 'Object') -> 'Object':
         raise ReverseTypeError(f'Object {self.__class__.__name__} cannot be divided in reverse')
 
-    def __pos__(self):
+    def __pos__(self) -> 'Object':
         raise TypeError(f'Object {self.__class__.__name__} cannot be posited')
 
-    def __neg__(self):
+    def __neg__(self) -> 'Object':
         raise TypeError(f'Object {self.__class__.__name__} cannot be negated')
 
     def __repr__(self) -> str:
@@ -124,10 +124,10 @@ class Dividable(FrontDividable, ReverseDividable, ABC):
 
 
 class Positable(Object):
-    def __pos__(self):
+    def __pos__(self) -> 'Object':
         raise NotImplementedError(f'Object {self.__class__.__name__} cannot be posited')
 
 
 class Negatable(Object):
-    def __neg__(self):
+    def __neg__(self) -> 'Object':
         raise NotImplementedError(f'Object {self.__class__.__name__} cannot be negated')
