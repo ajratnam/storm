@@ -1,3 +1,4 @@
+import inspect
 from typing import Optional
 
 
@@ -16,3 +17,14 @@ class Scope(dict):
                 except KeyError:
                     pass
             raise NameError(f'Unknown variable {item}')
+
+
+def get_executor():
+    frame = inspect.currentframe()
+    while frame := frame.f_back:
+        if inspect.getframeinfo(frame, 0).function == 'execute':
+            return frame.f_locals['self']
+
+
+def get_scope() -> Scope:
+    return get_executor().scope

@@ -51,6 +51,10 @@ def handle_prefix(obj: Object, prefixes: str) -> Object:
     return obj
 
 
+def assign(variable: Variable, obj: Object):
+    variable.value = obj
+
+
 def posite(obj: Object) -> Object:
     return obj.__pos__()
 
@@ -63,7 +67,8 @@ operation_mapping = {
     '+': add,
     '-': subtract,
     '*': multiply,
-    '/': divide
+    '/': divide,
+    '=': assign,
 }
 
 prefix_mapping = {
