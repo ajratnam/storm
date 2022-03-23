@@ -103,6 +103,12 @@ class Paginator(Generic[DT]):
     def __next__(self) -> DT:
         return self.next()
 
+    def __enter__(self):
+        self._ = self.index
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.index = self._
+
     def pop(self) -> DT:
         self.prev()
         return self.sequence.pop(self.index+1)
@@ -149,6 +155,14 @@ class Paginator(Generic[DT]):
     def move_while_condition(self, condition: Callable[[DT], bool], step: int = 1) -> DT:
         while condition(self.obj):
             return self.move_to_next_non_empty(step)
+
+    def match(self, string: str) -> bool:
+        with self:
+            for letter in string:
+                if letter != self.obj:
+                    return False
+                self.goto_next_non_empty()
+            return True
 
 
 def strip(objs: Collection[DT], denied: Any) -> Collection[DT] | str:
