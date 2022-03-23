@@ -17,6 +17,7 @@ class Checker(Paginator):
     def __init__(self, sequence: str) -> None:
         super().__init__(sequence)
         self.int_check: Check = Check(self, DIGITS)
+        self.period_check: Check = Check(self, PERIOD_SEPERATOR)
         self.char_check: Check = Check(self, ALPHABETS)
         self.base_operator_check: Check = Check(self, BASE_OPERATORS)
         self.string_check: Check = Check(self, STRING_PARENS)

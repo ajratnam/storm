@@ -58,7 +58,17 @@ class Tokenizer(Checker, Paginator):
 
     def parse_number(self) -> Token:
         value = ''
-        while self.int_check():
+        checks = [self.int_check, self.period_check]
+
+        def check_decimal() -> bool:
+            for pos, check in enumerate(checks):
+                if check():
+                    if pos > 0:
+                        checks.pop(pos)
+                    return True
+            return False
+
+        while check_decimal():
             value += self.obj
             self.goto_next_non_empty()
         return Token(NumberType, value)
