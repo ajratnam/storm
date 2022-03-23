@@ -19,6 +19,11 @@ def do_reversible_operation(left: Object, right: Object, operation: str) -> Obje
             return getattr(right, f'__r{operation}__')(left)
         except (NotImplementedError, ReverseTypeError):
             raise FirstException
+        except Exception as SecondException:
+            try:
+                return getattr(right, f'__{operation}__')(left)
+            except Exception:
+                raise SecondException
 
 
 def add(left: Addable, right: Object) -> Object:

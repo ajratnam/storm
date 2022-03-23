@@ -94,7 +94,7 @@ class String(Addable, Subtractable, Multipliable, Dividable, Negatable, Positabl
         if copysign(1, integer) < 0:
             value = value[::-1]
         decimal, integer = abs(decimal), int(abs(integer))
-        return String(value * integer + value * int(len(value) * decimal))
+        return String(value * integer + value[:int(len(value) * decimal)])
 
     def __rmul__(self, other: Object) -> 'String':
         decimal, integer = modf(Number(self.value, True).value)
@@ -102,7 +102,7 @@ class String(Addable, Subtractable, Multipliable, Dividable, Negatable, Positabl
         if copysign(1, integer) < 0:
             value = value[::-1]
         decimal, integer = abs(decimal), int(abs(integer))
-        return String(value * integer + value * int(len(value) * decimal))
+        return String(value * integer + value[:int(len(value) * decimal)])
 
     def __div__(self, other: Object) -> 'String':
         return self * Number(other.value, True).reciprocal()
