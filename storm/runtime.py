@@ -1,5 +1,5 @@
 import inspect
-from typing import Optional
+from typing import Optional, TextIO
 
 
 class Scope(dict):
@@ -28,3 +28,7 @@ def get_executor():
 
 def get_scope() -> Scope:
     return get_executor().scope
+
+
+def get_stdout() -> TextIO:
+    return get_executor().stdout
