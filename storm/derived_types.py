@@ -2,6 +2,7 @@ from math import modf, copysign
 
 from storm.converters import *
 from storm.generic_types import *
+from storm.runtime import Scope, get_scope
 
 
 class Number(Addable, Subtractable, Multipliable, Dividable, Negatable, Positable, Object):
@@ -118,3 +119,27 @@ class String(Addable, Subtractable, Multipliable, Dividable, Negatable, Positabl
 
     def __repr__(self) -> str:
         return self.value
+
+
+class Variable:
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self.globals: Scope = get_scope()
+
+    @property
+    def value(self) -> Object:
+        return self.globals[self.name]
+
+    @value.setter
+    def value(self, value: Object) -> None:
+        self.globals[self.name] = value
+
+    @value.deleter
+    def value(self) -> None:
+        raise AttributeError('Cannot be deleted')
+
+    def __getattr__(self, attr: str) -> Any:
+        return getattr(self.value, attr)
+
+    def __repr__(self) -> str:
+        return repr(self.value)
