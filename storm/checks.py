@@ -1,4 +1,4 @@
-from typing import Collection
+from typing import Collection, Callable
 
 from storm.collection import *
 from storm.utils import Paginator
@@ -21,3 +21,4 @@ class Checker(Paginator):
         self.char_check: Check = Check(self, ALPHABETS)
         self.base_operator_check: Check = Check(self, BASE_OPERATORS)
         self.string_check: Check = Check(self, STRING_PARENS)
+        self.print_check: Callable[[], bool] = lambda: self.match(PRINT)

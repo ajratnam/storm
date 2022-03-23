@@ -27,6 +27,7 @@ class Tokenizer(Checker, Paginator):
     def final_parse(self) -> None:
         self.combine_prefix()
         self.squash_operators()
+        self.fix_print()
 
     def combine_prefix(self) -> None:
         tokens = Paginator(self.tokens)
@@ -45,11 +46,21 @@ class Tokenizer(Checker, Paginator):
                 tokens.next()
             self.tokens = tokens.sequence
 
+    def fix_print(self) -> None:
+        tokens = Paginator(self.tokens)
+        while tokens.not_reached_end:
+            if tokens.obj.type is PrintType and tokens.next():
+                tokens.obj.value = tokens.pop()
+            tokens.next()
+        self.tokens = tokens.sequence
+
     def get_token(self) -> Collection[Token] | Token | None:
         if self.int_check():
             return self.parse_number()
         elif self.char_check():
             return self.parse_variable()
+        elif self.print_check():
+            return self.parse_print()
         elif self.base_operator_check():
             return self.parse_operator()
         elif self.string_check():
@@ -113,3 +124,7 @@ class Tokenizer(Checker, Paginator):
                 return Token(StringType, value[:-1])
         else:
             raise SyntaxError("Unclosed string")
+
+    def parse_print(self) -> Token:
+        self.goto_next_non_empty(2)
+        return Token(PrintType, None)

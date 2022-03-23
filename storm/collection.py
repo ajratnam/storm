@@ -25,3 +25,4 @@ OPERATOR_PRIORITY_ORDER = [
 ]
 
 STRING_PARENS = ["'", '"']
+PRINT = '=>'
