@@ -1,8 +1,18 @@
-package = []
+[[package]]
+name = "fishhook"
+version = "0.1.4"
+description = "Allows for runtime hooking of static class functions"
+category = "main"
+optional = false
+python-versions = ">=3.6"
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "17ca553b0bb9298a6ed528dd21e544ca433179192dba32a9920168e1c199d74f"
+content-hash = "778994b6c483dad76db5affd27fe459d957616dadf477fafad02f0018c0c372a"
 
 [metadata.files]
+fishhook = [
+    {file = "fishhook-0.1.4-py3-none-any.whl", hash = "sha256:6e84d12c4fa9ef9b9b8f2fa106e54e0c69a9020871cd187c114a98c73a296839"},
+    {file = "fishhook-0.1.4.tar.gz", hash = "sha256:45331ce2bc34f2b3264a7dfe50f66729fb574621a9a80a09e4772bdb57c25773"},
+]

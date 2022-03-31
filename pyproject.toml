@@ -6,6 +6,7 @@ authors = ["Ajay Ratnam <ajayratnam.satheesh@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+fishhook = "^0.1.4"
 
 [tool.poetry.dev-dependencies]
 
