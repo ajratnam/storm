@@ -3,6 +3,7 @@ from math import modf, copysign
 from storm.converters import *
 from storm.generic_types import *
 from storm.runtime import Scope, get_scope
+from storm.utils import Substitute
 
 
 class Number(Addable, Subtractable, Multipliable, Dividable, Negatable, Positable, Object):
@@ -123,15 +124,26 @@ class String(Addable, Subtractable, Multipliable, Dividable, Negatable, Positabl
 
 class Variable:
     def __init__(self, name: str) -> None:
-        self.name = name
+        self.name: str = name
         self.globals: Scope = get_scope()
+        self._value: Substitute = Substitute(self)
 
     @property
-    def value(self) -> Object:
-        return self.globals[self.name]
+    def value(self) -> Object | Substitute:
+        return self.globals.get(self.name, self._value)
+
+    @property
+    def unknown(self):
+        return self.value is not self._value
 
     @value.setter
     def value(self, value: Object) -> None:
+        if self.unknown:
+            self._value.assign(value)
+        else:
+            self.__set_val__(value)
+
+    def __set_val__(self, value):
         self.globals[self.name] = value
 
     @value.deleter

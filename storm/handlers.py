@@ -53,6 +53,7 @@ def handle_prefix(obj: Object, prefixes: str) -> Object:
 
 def assign(variable: Variable, obj: Object):
     variable.value = obj
+    return obj
 
 
 def posite(obj: Object) -> Object:

@@ -184,3 +184,16 @@ def extend(obj_list: list, new_val: Any) -> list:
 
 def make_error(name: str) -> type:
     return type(name, (Exception,), {})
+
+
+class Substitute:
+    def __init__(self, parent: Any) -> None:
+        self.temp_refs: list[Any] = [parent]
+
+    def assign(self, value: Any) -> None:
+        if isinstance(value, Substitute):
+            self.temp_refs.extend(value.temp_refs)
+            value.temp_refs = self.temp_refs
+        else:
+            for parent in self.temp_refs:
+                parent.__set_val__(value)
