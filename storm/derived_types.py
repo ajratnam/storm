@@ -1,4 +1,5 @@
 from math import modf, copysign
+from typing import Literal
 
 from storm.converters import *
 from storm.generic_types import *
@@ -122,33 +123,65 @@ class String(Addable, Subtractable, Multipliable, Dividable, Negatable, Positabl
         return self.value
 
 
+class Pointer:
+    def __init__(self, parent: 'Variable') -> None:
+        self.parent: Variable = parent
+
+    @property
+    def value(self):
+        return self
+    
+    @value.setter
+    def value(self, value):
+        self.parent.pointer = value
+
+    def get(self) -> Object | Substitute:
+        return self.parent.globals.get(self.parent.name, self.parent._value)
+
+    @property
+    def pointer(self):
+        return self.get()
+
+    def set(self, value: Object) -> None:
+        if self.parent.unknown:
+            self.parent._value.assign(value)
+        else:
+            self.parent.__set_val__(value)
+
+    def fset(self, value: Object) -> None:
+        self.parent.globals[self.parent.name] = value
+
+
 class Variable:
     def __init__(self, name: str) -> None:
         self.name: str = name
-        self.globals: Scope = get_scope()
         self._value: Substitute = Substitute(self)
+        self.globals: Scope = get_scope()
+        if not self.pointer:
+            self.pointer: Pointer = Pointer(self)
+
+    @property
+    def pointer(self) -> Pointer | None:
+        return self.globals.__pointers__.get(self.name)
+    
+    @pointer.setter
+    def pointer(self, value: Pointer) -> None:
+        self.globals.__pointers__[self.name] = value
 
     @property
     def value(self) -> Object | Substitute:
-        return self.globals.get(self.name, self._value)
+        return self.pointer.get()
+
+    @value.setter
+    def value(self, value: Object) -> None:
+        self.pointer.set(value)
 
     @property
     def unknown(self):
         return self.value is not self._value
 
-    @value.setter
-    def value(self, value: Object) -> None:
-        if self.unknown:
-            self._value.assign(value)
-        else:
-            self.__set_val__(value)
-
-    def __set_val__(self, value):
-        self.globals[self.name] = value
-
-    @value.deleter
-    def value(self) -> None:
-        raise AttributeError('Cannot be deleted')
+    def __set_val__(self, value: Object) -> None:
+        self.pointer.fset(value)
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.value, attr)

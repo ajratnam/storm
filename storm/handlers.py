@@ -64,6 +64,10 @@ def negate(obj: Object) -> Object:
     return obj.__neg__()
 
 
+def point(obj: Variable) -> Pointer:
+    return obj.pointer
+
+
 operation_mapping = {
     '+': add,
     '-': subtract,
@@ -74,5 +78,6 @@ operation_mapping = {
 
 prefix_mapping = {
     '+': posite,
-    '-': negate
+    '-': negate,
+    '*': point
 }
