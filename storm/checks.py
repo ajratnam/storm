@@ -20,5 +20,7 @@ class Checker(Paginator):
         self.period_check: Check = Check(self, PERIOD_SEPERATOR)
         self.char_check: Check = Check(self, ALPHABETS)
         self.base_operator_check: Check = Check(self, BASE_OPERATORS)
+        self.prefix_check: Check = Check(self, PREFIXES)
         self.string_check: Check = Check(self, STRING_PARENS)
         self.print_check: Callable[[], bool] = lambda: self.match(PRINT)
+        self.line_break_check: Check = Check(self, LINE_BREAK)

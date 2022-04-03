@@ -49,3 +49,6 @@ PrefixedType = TokenType('Prefixed')
 SquashedOperatorType = TokenType('SquashedOperator')
 StringType = TokenType('String')
 PrintType = TokenType('Print')
+LineBreak = TokenType('LineBreak')
+
+UnOperatable = [PrintType, LineBreak]

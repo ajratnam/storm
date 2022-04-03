@@ -1,7 +1,7 @@
 from typing import Collection
 
 from storm.checks import Checker
-from storm.collection import OPERATORS, OPERATOR_PRIORITY_ORDER
+from storm.collection import OPERATORS, OPERATOR_PRIORITY_ORDER, PREFIXES
 from storm.tokens import *
 from storm.utils import Paginator, strip, extend
 
@@ -42,7 +42,16 @@ class Tokenizer(Checker, Paginator):
             tokens = Paginator(self.tokens)
             while tokens.not_reached_end:
                 if tokens.obj.type is OperatorType and tokens.obj.value in operators and tokens.next():
-                    tokens.obj = SquashedOperatorToken(tokens.pop(), tokens.pop().value, tokens.obj)
+                    tokens.obj = SquashedOperatorToken(roper := tokens.pop(), tokens.pop().value, loper := tokens.obj)
+                    if loper.type in UnOperatable:
+                        for val in tokens.obj.value:
+                            if val not in PREFIXES:
+                                raise SyntaxError(f'Unknown Prefix {val}')
+                        tokens.obj = PrefixedToken(roper, tokens.obj.value)
+                        tokens.sequence.insert(tokens.index, loper)
+                        tokens.next()
+                    elif roper.type is UnOperatable:
+                        raise SyntaxError(f'No roperand {loper.value}{tokens.obj.value}')
                 tokens.next()
             self.tokens = tokens.sequence
 
@@ -63,9 +72,17 @@ class Tokenizer(Checker, Paginator):
             return self.parse_print()
         elif self.base_operator_check():
             return self.parse_operator()
+        elif self.prefix_check():
+            return self.parse_prefix()
         elif self.string_check():
             return self.parse_string()
+        elif self.line_break_check():
+            return self.break_line()
         self.goto_next_non_empty()
+
+    def break_line(self) -> Token:
+        self.goto_next_non_empty()
+        return Token(LineBreak, ';')
 
     def parse_number(self) -> Token:
         value = ''
@@ -92,24 +109,22 @@ class Tokenizer(Checker, Paginator):
         return Token(VariableType, value)
 
     def parse_operator(self) -> Collection[Token] | Token:
-        starting_index = self.index
         value = ''
         while self.base_operator_check():
             value += self.obj
+            if value not in OPERATORS:
+                value = value[:-1]
+                break
             self.goto_next_non_empty()
-        other_operators = strip(value, '+-')
-        if other_operators:
-            if other_operators not in OPERATORS:
-                raise SyntaxError(f"{value} is not an operator")
-            value = other_operators + strip(value, other_operators)
-        operator = ''
-        if starting_index:
-            for operator in OPERATORS:
-                if value.startswith(operator):
-                    break
-        prefix = value[len(operator):]
-        tokens = [operator and Token(OperatorType, operator), prefix and Token(PrefixType, prefix)]
-        return strip(tokens, '')
+        res = [Token(OperatorType, value), self.parse_prefix()]
+        return strip(res, '')
+
+    def parse_prefix(self) -> Token | str:
+        value = ''
+        while self.prefix_check():
+            value += self.obj
+            self.goto_next_non_empty()
+        return value and Token(PrefixType, value)
 
     def parse_string(self) -> Token:
         value = ''

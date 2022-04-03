@@ -24,5 +24,8 @@ OPERATOR_PRIORITY_ORDER = [
     ['==', '=']
 ]
 
+PREFIXES = ['+', '-', '*']
+
 STRING_PARENS = ["'", '"']
 PRINT = '=>'
+LINE_BREAK = ';'
