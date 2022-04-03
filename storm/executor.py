@@ -41,5 +41,7 @@ class Executor(Paginator[tokens.Token]):
             case tokens.PrintType:
                 value = self.parse(token.value)
                 get_stdout().write(str(value.value)+'\n')
+            case tokens.LineBreak:
+                pass
             case other:
                 raise ValueError(f'Execution for token type {other} not created!!')

@@ -5,6 +5,7 @@ from typing import Optional, TextIO
 class Scope(dict):
     def __init__(self, parent: Optional['Scope'] = None):
         super().__init__()
+        self.__pointers__: dict = {}
         self.parent: Scope | None = parent
 
     def __getitem__(self, item):
